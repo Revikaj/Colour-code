@@ -4,17 +4,26 @@ from pygame.version import ver
 
 NUM_BUTTONS = 20
 INITIAL_PADDING = 150
-BUTTON_ROW = 5
-BUTTON_COL = 4
-TOTAL_COLOURS = 3
-ALL_COLOURS = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
+BUTTON_ROW_GAME1 = 5
+BUTTON_COL_GAME1 = 4
+BUTTON_ROW_GAME2 = 8
+BUTTON_COL_GAME2 = 6
+
+TOTAL_COLOURS_GAME1 = 3
+ALL_COLOURS_GAME1 = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
+
+
+TOTAL_COLOURS_GAME2 = 5
+ALL_COLOURS_GAME2 = [(245, 130, 49), (255, 225, 25), (60, 180, 75), (66, 212, 244), (240, 32, 230)]
 
 size = width, height = 1500, 750
 screenColor = (0, 0, 0)
 
 initialButtonColor = (255, 255, 255)
-gameButtonWidth = 282
-gameButtonHeight = 125
+gameButtonWidth_1 = 282
+gameButtonHeight_1 = 125
+gameButtonWidth_2 = 165
+gameButtonHeight_2 = 75
 initialButtonTextColor = (0, 0, 0)
 
 colourButtonHeight = headingColourHeight = INITIAL_PADDING - 25
@@ -87,27 +96,51 @@ def drawEquationOption(win):
 
 
 
-def drawNumbers(win):
+def drawNumbers_game1(win):
     btnList = []
-    vertical_pad = (height - INITIAL_PADDING - BUTTON_COL * gameButtonHeight)/(BUTTON_COL + 1)
-    horizontal_pad = (width - BUTTON_ROW * gameButtonWidth)/(BUTTON_ROW + 1)
-    for i in range(1, BUTTON_ROW + 1):
-        for j in range (1, BUTTON_COL + 1):
-            txt = str (i + (j - 1) * BUTTON_ROW)
-            x = (i - 1) * (gameButtonWidth + horizontal_pad) + horizontal_pad
-            y  = INITIAL_PADDING + (j -  1) * (gameButtonHeight + vertical_pad) + vertical_pad
-            button(initialButtonColor, x, y, gameButtonWidth, gameButtonHeight, initialButtonTextColor, txt, btnList)
+    vertical_pad = (height - INITIAL_PADDING - BUTTON_COL_GAME1 * gameButtonHeight_1)/(BUTTON_COL_GAME1 + 1)
+    horizontal_pad = (width - BUTTON_ROW_GAME1 * gameButtonWidth_1)/(BUTTON_ROW_GAME1 + 1)
+    for i in range(1, BUTTON_ROW_GAME1 + 1):
+        for j in range (1, BUTTON_COL_GAME1 + 1):
+            txt = str (i + (j - 1) * BUTTON_ROW_GAME1)
+            x = (i - 1) * (gameButtonWidth_1 + horizontal_pad) + horizontal_pad
+            y  = INITIAL_PADDING + (j -  1) * (gameButtonHeight_1 + vertical_pad) + vertical_pad
+            button(initialButtonColor, x, y, gameButtonWidth_1, gameButtonHeight_1, initialButtonTextColor, txt, btnList)
     for btn in btnList:
         btn.draw(win)
 
     return btnList
 
-def makeColourButtons(win):
+
+def drawNumbers_game2(win):
+    btnList = []
+    vertical_pad = (height - INITIAL_PADDING - BUTTON_COL_GAME2 * gameButtonHeight_2)/(BUTTON_COL_GAME2 + 1)
+    horizontal_pad = (width - BUTTON_ROW_GAME2 * gameButtonWidth_2)/(BUTTON_ROW_GAME2 + 1)
+    for i in range(1, BUTTON_ROW_GAME2 + 1):
+        for j in range (1, BUTTON_COL_GAME2 + 1):
+            txt = str (i + (j - 1) * BUTTON_ROW_GAME2)
+            x = (i - 1) * (gameButtonWidth_2 + horizontal_pad) + horizontal_pad
+            y  = INITIAL_PADDING + (j -  1) * (gameButtonHeight_2 + vertical_pad) + vertical_pad
+            button(initialButtonColor, x, y, gameButtonWidth_2, gameButtonHeight_2, initialButtonTextColor, txt, btnList)
+    for btn in btnList:
+        btn.draw(win)
+
+    return btnList
+
+
+def makeColourButtons_game1(win):
     heading = button(screenColor, 50, 25, 350, 125, (255, 255, 255), "Pick a colour: ")
     heading.draw(win)
     colourButtons = []
-    for i in range(TOTAL_COLOURS):
-        btn = button(ALL_COLOURS[i], 50*(i + 1) + 350 + 300 * i, 25, 300, 125, (255, 255, 255), "", colourButtons)
+    for i in range(TOTAL_COLOURS_GAME1):
+        btn = button(ALL_COLOURS_GAME1[i], 50*(i + 1) + 350 + 300 * i, 25, 300, 125, (255, 255, 255), "", colourButtons)
+        btn.draw(win)
+    return colourButtons
+
+def makeColourButtons_game2(win):
+    colourButtons = []
+    for i in range(TOTAL_COLOURS_GAME2):
+        btn = button(ALL_COLOURS_GAME2[i], 50*(i + 1) + 240 * i, 25, 240, 125, (0, 0, 0), "Player " + str(i + 1), colourButtons)
         btn.draw(win)
     return colourButtons
 
@@ -186,10 +219,13 @@ while 1:
                 
             if gameEquationChosen and gameTypeChosen and initialScreen:
                 button(screenColor, 0, 0, width, height).draw(screen)
-                colourButtons = makeColourButtons(screen)
                 initialScreen = False
-                allButtons = drawNumbers(screen)
-
+                if gameType == 1:
+                    colourButtons = makeColourButtons_game1(screen)
+                    allButtons = drawNumbers_game1(screen)
+                else:
+                    allButtons = drawNumbers_game2(screen)
+                    colourButtons = makeColourButtons_game2(screen)
 
             optimizer = False
             for btn in colourButtons:
@@ -211,11 +247,11 @@ while 1:
                         btn.color = currentColour
                         num = int(btn.text)
                         sym = (num, num)
-                        if(currentColour == ALL_COLOURS[0]):
+                        if(currentColour == ALL_COLOURS_GAME1[0]):
                             red.add(num)
                             redSubsets.add(sym)
                             redSubsets = set.union(redSubsets, set(itertools.combinations(red, 2)))
-                        elif (currentColour == ALL_COLOURS[1]):
+                        elif (currentColour == ALL_COLOURS_GAME1[1]):
                             green.add(num)
                             greenSubsets.add(sym)
                             greenSubsets = set.union(greenSubsets, set(itertools.combinations(green, 2)))
@@ -228,7 +264,7 @@ while 1:
                         break
 
             for pair in redSubsets:
-                if gameEquation is 1:
+                if gameEquation == 1:
                     if pair[0] + pair[1] in red:
                         game = True
                         sce = [pair, "red"]
@@ -241,7 +277,7 @@ while 1:
                         break
 
             for pair in greenSubsets:
-                if gameEquation is 1:
+                if gameEquation == 1:
                     if pair[0] + pair[1] in green:
                         game = True
                         sce = [pair, "green"]
@@ -253,7 +289,7 @@ while 1:
                         break
 
             for pair in blueSubsets:
-                if gameEquation is 1:
+                if gameEquation == 1:
                     if pair[0] + pair[1] in blue:
                         game = True
                         sce = [pair, "blue"]
@@ -271,7 +307,7 @@ while 1:
         sum = num1 + num2
         num1 = str(num1)
         num2 = str(num2)
-        if gameEquation is 1:
+        if gameEquation == 1:
             sum = str(sum)
         else:
             sum = str(int(sum/2))
