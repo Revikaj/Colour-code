@@ -30,6 +30,9 @@ incorrectFontColor = (255, 0, 0)
 initialFontColor = (255, 255, 255)
 rectColor = (255, 255, 255)
 
+optionButtonWidth = 600
+optionButtonHeight = 300
+
 class button():
     def __init__(self, color, x,y,width,height, textColor = (0,0,0), text='', btnList = None):
         self.color = color
@@ -61,6 +64,28 @@ class button():
                 return True
             
         return False
+
+def drawGameOption(win):
+
+    b1 = button(initialButtonColor, 100 , 200, optionButtonWidth, optionButtonHeight, initialButtonTextColor, "2 - players 3 - colours", None)
+    b2 = button(initialButtonColor, 100 * 2 + optionButtonWidth , 200, optionButtonWidth, optionButtonHeight, initialButtonTextColor, "5 player elimination", None)
+    b1.draw(win)
+    b2.draw(win)
+
+    return b1, b2
+
+def drawEquationOption(win):
+    btnList = []
+
+    button(initialButtonColor, 100 , 200, optionButtonWidth, optionButtonHeight, initialButtonTextColor, "x + y = z", btnList)
+    button(initialButtonColor, 100 * 2 + optionButtonWidth , 200, optionButtonWidth, optionButtonHeight, initialButtonTextColor, "x + y = 2z", btnList)
+
+    for btn in btnList:
+        btn.draw(win)
+
+    return btnList
+
+
 
 def drawNumbers(win):
     btnList = []
@@ -100,8 +125,11 @@ pygame.display.set_caption("SCHUR'S GAME")
 #initializing the font
 font= pygame.font.SysFont("Comic Sans",80)
 
-allButtons = drawNumbers(screen)
-colourButtons = makeColourButtons(screen)
+gameTypeChosen = False
+gameEquationChosen = False
+initialScreen = True
+
+option_2, option_elimination = drawGameOption(screen)
 currentColourFlag = False
 
 green = set()
@@ -134,7 +162,35 @@ while 1:
         if game:
             continue
 
+        
         if event.type == pygame.MOUSEBUTTONDOWN:
+
+            if not gameTypeChosen:
+                if option_2.isOver(cursorPosition):
+                    gameType = 1
+                    gameTypeChosen = True
+                    eq1, eq2 = drawEquationOption(screen)
+                elif option_elimination.isOver(cursorPosition):
+                    gameType = 2
+                    gameTypeChosen = True 
+                    eq1, eq2 = drawEquationOption(screen)
+                continue
+
+            if not gameEquationChosen and gameTypeChosen:
+                if eq1.isOver(cursorPosition):
+                    gameEquation = 1
+                    gameEquationChosen = True
+                elif eq2.isOver(cursorPosition):
+                    gameEquation = 2
+                    gameEquationChosen = True
+                
+            if gameEquationChosen and gameTypeChosen and initialScreen:
+                button(screenColor, 0, 0, width, height).draw(screen)
+                colourButtons = makeColourButtons(screen)
+                initialScreen = False
+                allButtons = drawNumbers(screen)
+
+
             optimizer = False
             for btn in colourButtons:
                 if (btn.isOver(cursorPosition)):
@@ -172,22 +228,41 @@ while 1:
                         break
 
             for pair in redSubsets:
-                if pair[0] + pair[1] in red:
-                    game = True
-                    sce = [pair, "red"]
-                    break
+                if gameEquation is 1:
+                    if pair[0] + pair[1] in red:
+                        game = True
+                        sce = [pair, "red"]
+                        break
+                else:
+                    print(0.5 * (pair[0] + pair[1]))
+                    if 0.5 * (pair[0] + pair[1]) in red and pair[0] != pair[1]:
+                        game = True
+                        sce = [pair, "red"]
+                        break
 
             for pair in greenSubsets:
-                if pair[0] + pair[1] in green:
-                    game = True
-                    sce = [pair, "green"]
-                    break
+                if gameEquation is 1:
+                    if pair[0] + pair[1] in green:
+                        game = True
+                        sce = [pair, "green"]
+                        break
+                else:
+                    if 0.5 * (pair[0] + pair[1]) in green and pair[0] != pair[1]:
+                        game = True
+                        sce = [pair, "green"]
+                        break
 
             for pair in blueSubsets:
-                if pair[0] + pair[1] in blue:
-                    game = True
-                    sce = [pair, "blue"]
-                    break
+                if gameEquation is 1:
+                    if pair[0] + pair[1] in blue:
+                        game = True
+                        sce = [pair, "blue"]
+                        break
+                else:
+                    if 0.5 * (pair[0] + pair[1]) in blue  and pair[0] != pair[1]:
+                        game = True
+                        sce = [pair, "blue"]
+                        break
 
     if game:
         print(sce)
@@ -196,7 +271,10 @@ while 1:
         sum = num1 + num2
         num1 = str(num1)
         num2 = str(num2)
-        sum = str(sum)
+        if gameEquation is 1:
+            sum = str(sum)
+        else:
+            sum = str(int(sum/2))
         for btn in allButtons:
             if btn.text == num1 or btn.text == num2 or btn.text == sum:
                 continue
