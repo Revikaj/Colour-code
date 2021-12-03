@@ -1,6 +1,7 @@
 import sys, pygame
 import itertools
 from pygame.version import ver
+from pygame import mixer
 import time
 
 NUM_BUTTONS = 20
@@ -96,7 +97,20 @@ def drawEquationOption(win):
 
     return btnList
 
-
+def errorMusic():
+    # Starting the mixer
+    mixer.init()
+    
+    # Loading the song
+    mixer.music.load("Er.mp3")
+    
+    # Setting the volume
+    mixer.music.set_volume(1.0)
+    
+    # Start playing the song
+    mixer.music.play()
+    ##time.sleep(3)
+    ##mixer.music.stop()
 
 def drawNumbers_game1(win):
     btnList = []
@@ -272,8 +286,6 @@ while 1:
                     optimizer = True
                 else:
                     btn.draw(screen, btn.color)
-            # else:
-            #     continue
 
             if optimizer:
                 continue
@@ -333,24 +345,28 @@ while 1:
                         if pair[0] + pair[1] in c1:
                             game = True
                             sce = [pair, "c1"]
+                            errorMusic()
                             break
                     else:
                         print(0.5 * (pair[0] + pair[1]))
                         if 0.5 * (pair[0] + pair[1]) in c1 and pair[0] != pair[1]:
                             game = True
                             sce = [pair, "c1"]
+                            errorMusic()
                             break
 
                 for pair in c2Subsets:
                     if gameEquation == 1:
                         if pair[0] + pair[1] in c2:
                             game = True
+                            errorMusic()
                             sce = [pair, "c2"]
                             break
                     else:
                         if 0.5 * (pair[0] + pair[1]) in c2  and pair[0] != pair[1]:
                             game = True
                             sce = [pair, "c2"]
+                            errorMusic()
                             break
 
                 for pair in c3Subsets:
@@ -358,11 +374,13 @@ while 1:
                         if pair[0] + pair[1] in c3:
                             game = True
                             sce = [pair, "c3"]
+                            errorMusic()
                             break
                     else:
                         if 0.5 * (pair[0] + pair[1]) in c3 and pair[0] != pair[1]:
                             game = True
                             sce = [pair, "c3"]
+                            errorMusic()
                             break
             else:
                 
@@ -373,8 +391,11 @@ while 1:
                                 el_count += 1
                                 colourButtons[0].text = game2makestr(pair[0], pair[1])
                                 colourButtons[0].draw(screen)
-                                el_colours.append([pair, "c1"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(pair[1] + pair[0])
                                 colourButtons[0].disabled = True
+                                errorMusic()
                             c1El = True
                             break
                     else:
@@ -384,8 +405,11 @@ while 1:
                                 el_count += 1
                                 colourButtons[0].text = game2makestr(pair[0], pair[1])
                                 colourButtons[0].draw(screen)
-                                el_colours.append([pair, "c1"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(int((pair[1] + pair[0])*0.5))
                                 colourButtons[0].disabled = True
+                                errorMusic()
                             c1El = True
                             break
 
@@ -396,8 +420,11 @@ while 1:
                                 el_count += 1
                                 colourButtons[1].text = game2makestr(pair[0], pair[1])
                                 colourButtons[1].draw(screen)
-                                el_colours.append([pair, "c2"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(pair[1] + pair[0])
                                 colourButtons[1].disabled = True
+                                errorMusic()
                             c2El = True
                             break
                     else:
@@ -406,8 +433,11 @@ while 1:
                                 el_count += 1
                                 colourButtons[1].text = game2makestr(pair[0], pair[1])
                                 colourButtons[1].draw(screen)
-                                el_colours.append([pair, "c2"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(int((pair[1] + pair[0])*0.5))
                                 colourButtons[1].disabled = True
+                                errorMusic()
                             c2El = True
                             break
 
@@ -418,8 +448,11 @@ while 1:
                                 el_count += 1
                                 colourButtons[2].text = game2makestr(pair[0], pair[1])
                                 colourButtons[2].draw(screen)
-                                el_colours.append([pair, "c3"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(pair[1] + pair[0])
                                 colourButtons[2].disabled = True
+                                errorMusic()
                             c3El = True
                             break
                     else:
@@ -429,8 +462,11 @@ while 1:
                                 colourButtons[2].text = game2makestr(pair[0], pair[1])
                                 colourButtons[2].draw(screen)
                                 colourButtons[2].draw(screen)
-                                el_colours.append([pair, "c3"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(int((pair[1] + pair[0])*0.5))
                                 colourButtons[2].disabled = True
+                                errorMusic()
                             c3El = True
                             break
 
@@ -441,8 +477,11 @@ while 1:
                                 colourButtons[3].text = game2makestr(pair[0], pair[1])
                                 colourButtons[3].draw(screen)
                                 el_count += 1
-                                el_colours.append([pair, "c4"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(pair[1] + pair[0])
                                 colourButtons[3].disabled = True
+                                errorMusic()
                             c4El = True
                             break
                     else:
@@ -451,8 +490,11 @@ while 1:
                                 el_count += 1
                                 colourButtons[3].text = game2makestr(pair[0], pair[1])
                                 colourButtons[3].draw(screen)
-                                el_colours.append([pair, "c4"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(int((pair[1] + pair[0])*0.5))
                                 colourButtons[3].disabled = True
+                                errorMusic()
                             c4El = True
                             break
 
@@ -463,8 +505,11 @@ while 1:
                                 el_count += 1
                                 colourButtons[4].text = game2makestr(pair[0], pair[1])
                                 colourButtons[4].draw(screen)
-                                el_colours.append([pair, "c4"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(pair[1] + pair[0])
                                 colourButtons[4].disabled = True
+                                errorMusic()
                             c5El = True
                             break
                     else:
@@ -473,8 +518,11 @@ while 1:
                                 el_count += 1
                                 colourButtons[4].text = game2makestr(pair[0], pair[1])
                                 colourButtons[4].draw(screen)
-                                el_colours.append([pair, "c4"])
+                                el_colours.append(pair[0])
+                                el_colours.append(pair[1])
+                                el_colours.append(int((pair[1] + pair[0])*0.5))
                                 colourButtons[4].disabled = True
+                                errorMusic()
                             c5El = True
                             break
                 pygame.display.update()
@@ -492,6 +540,13 @@ while 1:
             sum = str(int(sum/2))
         for btn in allButtons:
             if btn.text == num1 or btn.text == num2 or btn.text == sum:
+                continue
+            btn.color = initialButtonColor
+            btn.draw(screen)
+
+    if el_count == 4:  
+        for btn in allButtons:
+            if int(btn.text) in el_colours:
                 continue
             btn.color = initialButtonColor
             btn.draw(screen)
