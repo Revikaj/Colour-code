@@ -1,6 +1,7 @@
 import sys, pygame
 import itertools
 from pygame.version import ver
+import time
 
 NUM_BUTTONS = 20
 INITIAL_PADDING = 150
@@ -51,6 +52,7 @@ class button():
         self.height = height
         self.textColor = textColor
         self.text = text
+        self.disabled = False
         if btnList != None:
             btnList.append(self)
 
@@ -127,6 +129,8 @@ def drawNumbers_game2(win):
 
     return btnList
 
+def drawSplash(win):
+    button(initialButtonColor, 0, 0, 1500, 750, initialButtonTextColor, "Schur's Game").draw(win)
 
 def makeColourButtons_game1(win):
     heading = button(screenColor, 50, 25, 350, 125, (255, 255, 255), "Pick a colour: ")
@@ -148,7 +152,7 @@ def game2makestr(x, y):
     if gameEquation == 1:
         return str(x) + " + " + str(y) + " = " + str(x + y)
     else:
-        return str(x) + " + " + str(y) + " = 2" + str(x + y)
+        return str(x) + "+" + str(y) + "= 2*" + str(int((x + y) * 0.5 ))
 
 pygame.init()
 
@@ -163,11 +167,12 @@ pygame.display.set_caption("SCHUR'S GAME")
 #initializing the font
 font= pygame.font.SysFont("Comic Sans",80)
 
+splashScreen = False
 gameTypeChosen = False
 gameEquationChosen = False
 initialScreen = True
 
-option_2, option_elimination = drawGameOption(screen)
+drawSplash(screen)
 currentColourFlag = False
 
 c1 = set()
@@ -189,6 +194,7 @@ c4El = False
 c5El = False
 
 el_count = 0
+el_colours = []
 
 game = False
 
@@ -212,12 +218,18 @@ while 1:
         if game:
             continue
 
+        if not splashScreen:
+            time.sleep(5)
+            button((0, 0, 0), 0, 0, 1500, 750, (0, 0, 0), "").draw(screen)
+            option_2, option_elimination = drawGameOption(screen)
+            splashScreen = True
+
         
         if event.type == pygame.MOUSEBUTTONDOWN:
 
             # currentColourFlag = True
 
-            if not gameTypeChosen:
+            if not gameTypeChosen and splashScreen:
                 if option_2.isOver(cursorPosition):
                     gameType = 1
                     gameTypeChosen = True
@@ -251,6 +263,8 @@ while 1:
             # if gameType == 1:
 
             for btn in colourButtons:
+                if btn.disabled:
+                    continue
                 if (btn.isOver(cursorPosition)):
                     btn.draw(screen, colourButtonOutlineColour)
                     currentColour = btn.color
@@ -358,8 +372,10 @@ while 1:
                             if not c1El: 
                                 el_count += 1
                                 colourButtons[0].text = game2makestr(pair[0], pair[1])
+                                colourButtons[0].draw(screen)
+                                el_colours.append([pair, "c1"])
+                                colourButtons[0].disabled = True
                             c1El = True
-                            sce = [pair, "c1"]
                             break
                     else:
                         print(0.5 * (pair[0] + pair[1]))
@@ -367,8 +383,10 @@ while 1:
                             if not c1El: 
                                 el_count += 1
                                 colourButtons[0].text = game2makestr(pair[0], pair[1])
+                                colourButtons[0].draw(screen)
+                                el_colours.append([pair, "c1"])
+                                colourButtons[0].disabled = True
                             c1El = True
-                            sce = [pair, "c1"]
                             break
 
                 for pair in c2Subsets:
@@ -377,16 +395,20 @@ while 1:
                             if not c2El: 
                                 el_count += 1
                                 colourButtons[1].text = game2makestr(pair[0], pair[1])
+                                colourButtons[1].draw(screen)
+                                el_colours.append([pair, "c2"])
+                                colourButtons[1].disabled = True
                             c2El = True
-                            sce = [pair, "c2"]
                             break
                     else:
                         if 0.5 * (pair[0] + pair[1]) in c2  and pair[0] != pair[1]:
                             if not c2El: 
                                 el_count += 1
                                 colourButtons[1].text = game2makestr(pair[0], pair[1])
+                                colourButtons[1].draw(screen)
+                                el_colours.append([pair, "c2"])
+                                colourButtons[1].disabled = True
                             c2El = True
-                            sce = [pair, "c2"]
                             break
 
                 for pair in c3Subsets:
@@ -395,16 +417,21 @@ while 1:
                             if not c3El: 
                                 el_count += 1
                                 colourButtons[2].text = game2makestr(pair[0], pair[1])
+                                colourButtons[2].draw(screen)
+                                el_colours.append([pair, "c3"])
+                                colourButtons[2].disabled = True
                             c3El = True
-                            sce = [pair, "c3"]
                             break
                     else:
                         if 0.5 * (pair[0] + pair[1]) in c3 and pair[0] != pair[1]:
                             if not c3El: 
                                 el_count += 1
                                 colourButtons[2].text = game2makestr(pair[0], pair[1])
+                                colourButtons[2].draw(screen)
+                                colourButtons[2].draw(screen)
+                                el_colours.append([pair, "c3"])
+                                colourButtons[2].disabled = True
                             c3El = True
-                            sce = [pair, "c3"]
                             break
 
                 for pair in c4Subsets:
@@ -412,17 +439,21 @@ while 1:
                         if pair[0] + pair[1] in c4:
                             if not c4El: 
                                 colourButtons[3].text = game2makestr(pair[0], pair[1])
+                                colourButtons[3].draw(screen)
                                 el_count += 1
+                                el_colours.append([pair, "c4"])
+                                colourButtons[3].disabled = True
                             c4El = True
-                            sce = [pair, "c4"]
                             break
                     else:
                         if 0.5 * (pair[0] + pair[1]) in c4 and pair[0] != pair[1]:
                             if not c4El: 
                                 el_count += 1
-                            colourButtons[3].text = game2makestr(pair[0], pair[1])
+                                colourButtons[3].text = game2makestr(pair[0], pair[1])
+                                colourButtons[3].draw(screen)
+                                el_colours.append([pair, "c4"])
+                                colourButtons[3].disabled = True
                             c4El = True
-                            sce = [pair, "c4"]
                             break
 
                 for pair in c5Subsets:
@@ -431,17 +462,22 @@ while 1:
                             if not c5El: 
                                 el_count += 1
                                 colourButtons[4].text = game2makestr(pair[0], pair[1])
+                                colourButtons[4].draw(screen)
+                                el_colours.append([pair, "c4"])
+                                colourButtons[4].disabled = True
                             c5El = True
-                            sce = [pair, "c5"]
                             break
                     else:
                         if 0.5 * (pair[0] + pair[1]) in c5 and pair[0] != pair[1]:
                             if not c5El: 
                                 el_count += 1
                                 colourButtons[4].text = game2makestr(pair[0], pair[1])
+                                colourButtons[4].draw(screen)
+                                el_colours.append([pair, "c4"])
+                                colourButtons[4].disabled = True
                             c5El = True
-                            sce = [pair, "c5"]
                             break
+                pygame.display.update()
 
     if game:
         print(sce)
@@ -459,9 +495,3 @@ while 1:
                 continue
             btn.color = initialButtonColor
             btn.draw(screen)
-            
-
-              
-                        
-
-       
