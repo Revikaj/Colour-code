@@ -144,6 +144,11 @@ def makeColourButtons_game2(win):
         btn.draw(win)
     return colourButtons
 
+def game2makestr(x, y):
+    if gameEquation == 1:
+        return str(x) + " + " + str(y) + " = " + str(x + y)
+    else:
+        return str(x) + " + " + str(y) + " = 2" + str(x + y)
 
 pygame.init()
 
@@ -165,13 +170,25 @@ initialScreen = True
 option_2, option_elimination = drawGameOption(screen)
 currentColourFlag = False
 
-green = set()
-red = set()
-blue = set()
+c1 = set()
+c2 = set()
+c3 = set()
+c4 = set()
+c5 = set()
 
-redSubsets = set()
-greenSubsets = set()
-blueSubsets = set()
+c1Subsets = set()
+c2Subsets = set()
+c3Subsets = set()
+c4Subsets = set()
+c5Subsets = set()
+
+c1El = False
+c2El = False
+c3El = False
+c4El = False
+c5El = False
+
+el_count = 0
 
 game = False
 
@@ -197,6 +214,8 @@ while 1:
 
         
         if event.type == pygame.MOUSEBUTTONDOWN:
+
+            # currentColourFlag = True
 
             if not gameTypeChosen:
                 if option_2.isOver(cursorPosition):
@@ -228,6 +247,9 @@ while 1:
                     colourButtons = makeColourButtons_game2(screen)
 
             optimizer = False
+
+            # if gameType == 1:
+
             for btn in colourButtons:
                 if (btn.isOver(cursorPosition)):
                     btn.draw(screen, colourButtonOutlineColour)
@@ -236,6 +258,8 @@ while 1:
                     optimizer = True
                 else:
                     btn.draw(screen, btn.color)
+            # else:
+            #     continue
 
             if optimizer:
                 continue
@@ -243,62 +267,181 @@ while 1:
             for btn in allButtons:
                 if (btn.isOver(cursorPosition)):
                     print(btn.text) 
-                    if(currentColourFlag and btn.color == initialButtonColor): 
+                    if(currentColourFlag and btn.color == initialButtonColor and gameType == 1): 
                         btn.color = currentColour
                         num = int(btn.text)
                         sym = (num, num)
                         if(currentColour == ALL_COLOURS_GAME1[0]):
-                            red.add(num)
-                            redSubsets.add(sym)
-                            redSubsets = set.union(redSubsets, set(itertools.combinations(red, 2)))
+                            c1.add(num)
+                            c1Subsets.add(sym)
+                            c1Subsets = set.union(c1Subsets, set(itertools.combinations(c1, 2)))
                         elif (currentColour == ALL_COLOURS_GAME1[1]):
-                            green.add(num)
-                            greenSubsets.add(sym)
-                            greenSubsets = set.union(greenSubsets, set(itertools.combinations(green, 2)))
+                            c2.add(num)
+                            c2Subsets.add(sym)
+                            c2Subsets = set.union(c2Subsets, set(itertools.combinations(c2, 2)))
                         else:
-                            blue.add(num)
-                            blueSubsets.add(sym)
-                            blueSubsets = set.union(blueSubsets, set(itertools.combinations(blue, 2)))
+                            c3.add(num)
+                            c3Subsets.add(sym)
+                            c3Subsets = set.union(c3Subsets, set(itertools.combinations(c3, 2)))
                         btn.draw(screen)
-                        print(redSubsets, greenSubsets, blueSubsets)
+                        print(c1Subsets, c3Subsets, c2Subsets)
                         break
+                    elif (currentColourFlag and btn.color == initialButtonColor and gameType == 2): 
+                        btn.color = currentColour
+                        num = int(btn.text)
+                        sym = (num, num)
+                        if(currentColour == ALL_COLOURS_GAME2[0]):
+                            c1.add(num)
+                            c1Subsets.add(sym)
+                            c1Subsets = set.union(c1Subsets, set(itertools.combinations(c1, 2)))
+                        elif currentColour == ALL_COLOURS_GAME2[1]:
+                            c2.add(num)
+                            c2Subsets.add(sym)
+                            c2Subsets = set.union(c2Subsets, set(itertools.combinations(c2, 2)))
+                        elif (currentColour == ALL_COLOURS_GAME2[2]):
+                            c3.add(num)
+                            c3Subsets.add(sym)
+                            c3Subsets = set.union(c3Subsets, set(itertools.combinations(c3, 2)))
+                        elif currentColour == ALL_COLOURS_GAME2[3]:
+                            c4.add(num)
+                            c4Subsets.add(sym)
+                            c4Subsets = set.union(c4Subsets, set(itertools.combinations(c4, 2)))
+                        else:
+                            c5.add(num)
+                            c5Subsets.add(sym)
+                            c5Subsets = set.union(c5Subsets, set(itertools.combinations(c5, 2)))
+                        btn.draw(screen)
+                        print(c1Subsets, c2Subsets, c3Subsets, c4Subsets, c5Subsets)
+                        break
+            if gameType == 1:                
+                for pair in c1Subsets:
+                    if gameEquation == 1:
+                        if pair[0] + pair[1] in c1:
+                            game = True
+                            sce = [pair, "c1"]
+                            break
+                    else:
+                        print(0.5 * (pair[0] + pair[1]))
+                        if 0.5 * (pair[0] + pair[1]) in c1 and pair[0] != pair[1]:
+                            game = True
+                            sce = [pair, "c1"]
+                            break
 
-            for pair in redSubsets:
-                if gameEquation == 1:
-                    if pair[0] + pair[1] in red:
-                        game = True
-                        sce = [pair, "red"]
-                        break
-                else:
-                    print(0.5 * (pair[0] + pair[1]))
-                    if 0.5 * (pair[0] + pair[1]) in red and pair[0] != pair[1]:
-                        game = True
-                        sce = [pair, "red"]
-                        break
+                for pair in c2Subsets:
+                    if gameEquation == 1:
+                        if pair[0] + pair[1] in c2:
+                            game = True
+                            sce = [pair, "c2"]
+                            break
+                    else:
+                        if 0.5 * (pair[0] + pair[1]) in c2  and pair[0] != pair[1]:
+                            game = True
+                            sce = [pair, "c2"]
+                            break
 
-            for pair in greenSubsets:
-                if gameEquation == 1:
-                    if pair[0] + pair[1] in green:
-                        game = True
-                        sce = [pair, "green"]
-                        break
-                else:
-                    if 0.5 * (pair[0] + pair[1]) in green and pair[0] != pair[1]:
-                        game = True
-                        sce = [pair, "green"]
-                        break
+                for pair in c3Subsets:
+                    if gameEquation == 1:
+                        if pair[0] + pair[1] in c3:
+                            game = True
+                            sce = [pair, "c3"]
+                            break
+                    else:
+                        if 0.5 * (pair[0] + pair[1]) in c3 and pair[0] != pair[1]:
+                            game = True
+                            sce = [pair, "c3"]
+                            break
+            else:
+                
+                for pair in c1Subsets:
+                    if gameEquation == 1:
+                        if pair[0] + pair[1] in c1:
+                            if not c1El: 
+                                el_count += 1
+                                colourButtons[0].text = game2makestr(pair[0], pair[1])
+                            c1El = True
+                            sce = [pair, "c1"]
+                            break
+                    else:
+                        print(0.5 * (pair[0] + pair[1]))
+                        if 0.5 * (pair[0] + pair[1]) in c1 and pair[0] != pair[1]:
+                            if not c1El: 
+                                el_count += 1
+                                colourButtons[0].text = game2makestr(pair[0], pair[1])
+                            c1El = True
+                            sce = [pair, "c1"]
+                            break
 
-            for pair in blueSubsets:
-                if gameEquation == 1:
-                    if pair[0] + pair[1] in blue:
-                        game = True
-                        sce = [pair, "blue"]
-                        break
-                else:
-                    if 0.5 * (pair[0] + pair[1]) in blue  and pair[0] != pair[1]:
-                        game = True
-                        sce = [pair, "blue"]
-                        break
+                for pair in c2Subsets:
+                    if gameEquation == 1:
+                        if pair[0] + pair[1] in c2:
+                            if not c2El: 
+                                el_count += 1
+                                colourButtons[1].text = game2makestr(pair[0], pair[1])
+                            c2El = True
+                            sce = [pair, "c2"]
+                            break
+                    else:
+                        if 0.5 * (pair[0] + pair[1]) in c2  and pair[0] != pair[1]:
+                            if not c2El: 
+                                el_count += 1
+                                colourButtons[1].text = game2makestr(pair[0], pair[1])
+                            c2El = True
+                            sce = [pair, "c2"]
+                            break
+
+                for pair in c3Subsets:
+                    if gameEquation == 1:
+                        if pair[0] + pair[1] in c3:
+                            if not c3El: 
+                                el_count += 1
+                                colourButtons[2].text = game2makestr(pair[0], pair[1])
+                            c3El = True
+                            sce = [pair, "c3"]
+                            break
+                    else:
+                        if 0.5 * (pair[0] + pair[1]) in c3 and pair[0] != pair[1]:
+                            if not c3El: 
+                                el_count += 1
+                                colourButtons[2].text = game2makestr(pair[0], pair[1])
+                            c3El = True
+                            sce = [pair, "c3"]
+                            break
+
+                for pair in c4Subsets:
+                    if gameEquation == 1:
+                        if pair[0] + pair[1] in c4:
+                            if not c4El: 
+                                colourButtons[3].text = game2makestr(pair[0], pair[1])
+                                el_count += 1
+                            c4El = True
+                            sce = [pair, "c4"]
+                            break
+                    else:
+                        if 0.5 * (pair[0] + pair[1]) in c4 and pair[0] != pair[1]:
+                            if not c4El: 
+                                el_count += 1
+                            colourButtons[3].text = game2makestr(pair[0], pair[1])
+                            c4El = True
+                            sce = [pair, "c4"]
+                            break
+
+                for pair in c5Subsets:
+                    if gameEquation == 1:
+                        if pair[0] + pair[1] in c5:
+                            if not c5El: 
+                                el_count += 1
+                                colourButtons[4].text = game2makestr(pair[0], pair[1])
+                            c5El = True
+                            sce = [pair, "c5"]
+                            break
+                    else:
+                        if 0.5 * (pair[0] + pair[1]) in c5 and pair[0] != pair[1]:
+                            if not c5El: 
+                                el_count += 1
+                                colourButtons[4].text = game2makestr(pair[0], pair[1])
+                            c5El = True
+                            sce = [pair, "c5"]
+                            break
 
     if game:
         print(sce)
